@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webcc.mapper.TeauserMapper" >
+
+  <resultMap id="BaseResultMap" type="com.webcc.model.Teauser" >
+    <id column="id" property="id" />
+    <result column="teaName" property="teaname" jdbcType="VARCHAR" />
+    <result column="teaNo" property="teano" jdbcType="VARCHAR" />
+    <result column="teaSex" property="teasex" jdbcType="INTEGER" />
+    <result column="birthday" property="birthday" jdbcType="VARCHAR" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="selectTeaList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_teauser
+  </select>
+
+  <select id="selectByName" parameterType="java.lang.String" resultType="java.lang.String">
+    select pwd FROM tb_teauser WHERE  teaNo = #{username}
+  </select>
+
+  <select id="selectTeaByNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from tb_teauser WHERE teaNo = #{teaNo}
+  </select>
+
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, teaName, teaNo, teaSex, birthday, tel, pwd
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.webcc.model.TeauserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from tb_teauser
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_teauser
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_teauser
+    where id = #{id}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.webcc.model.TeauserExample" >
+    delete from tb_teauser
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.webcc.model.Teauser" >
+    insert into tb_teauser (id, teaName, teaNo, 
+      teaSex, birthday, tel, 
+      pwd)
+    values (#{id}, #{teaname,jdbcType=VARCHAR}, #{teano,jdbcType=VARCHAR},
+      #{teasex}, #{birthday,jdbcType=DATE}, #{tel,jdbcType=VARCHAR},
+      #{pwd,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.webcc.model.Teauser" >
+    insert into tb_teauser
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="teaname != null" >
+        teaName,
+      </if>
+      <if test="teano != null" >
+        teaNo,
+      </if>
+      <if test="teasex != null" >
+        teaSex,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="tel != null" >
+        tel,
+      </if>
+      <if test="pwd != null" >
+        pwd,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="teaname != null" >
+        #{teaname,jdbcType=VARCHAR},
+      </if>
+      <if test="teano != null" >
+        #{teano,jdbcType=VARCHAR},
+      </if>
+      <if test="teasex != null" >
+        #{teasex},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="tel != null" >
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.webcc.model.TeauserExample" resultType="java.lang.Long" >
+    select count(*) from tb_teauser
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tb_teauser
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id},
+      </if>
+      <if test="record.teaname != null" >
+        teaName = #{record.teaname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teano != null" >
+        teaNo = #{record.teano,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teasex != null" >
+        teaSex = #{record.teasex},
+      </if>
+      <if test="record.birthday != null" >
+        birthday = #{record.birthday,jdbcType=DATE},
+      </if>
+      <if test="record.tel != null" >
+        tel = #{record.tel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pwd != null" >
+        pwd = #{record.pwd,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tb_teauser
+    set id = #{record.id},
+      teaName = #{record.teaname,jdbcType=VARCHAR},
+      teaNo = #{record.teano,jdbcType=VARCHAR},
+      teaSex = #{record.teasex},
+      birthday = #{record.birthday,jdbcType=DATE},
+      tel = #{record.tel,jdbcType=VARCHAR},
+      pwd = #{record.pwd,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.webcc.model.Teauser" >
+    update tb_teauser
+    <set >
+      <if test="teaname != null" >
+        teaName = #{teaname,jdbcType=VARCHAR},
+      </if>
+      <if test="teano != null" >
+        teaNo = #{teano,jdbcType=VARCHAR},
+      </if>
+      <if test="teasex != null" >
+        teaSex = #{teasex},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="tel != null" >
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.webcc.model.Teauser" >
+    update tb_teauser
+    set teaName = #{teaname,jdbcType=VARCHAR},
+      teaNo = #{teano,jdbcType=VARCHAR},
+      teaSex = #{teasex},
+      birthday = #{birthday,jdbcType=DATE},
+      tel = #{tel,jdbcType=VARCHAR},
+      pwd = #{pwd,jdbcType=VARCHAR}
+    where id = #{id}
+  </update>
+
+  <update id="updateTeaInfo" parameterType="com.webcc.model.Teauser" >
+    update tb_teauser
+    set
+      teaSex = #{teasex},
+      birthday = #{birthday,jdbcType=DATE},
+      tel = #{tel,jdbcType=VARCHAR}
+    where id = #{id}
+  </update>
+
+  <select id="selectIdByMap" parameterType="map" resultType="Long">
+    select id from tb_teauser where pwd = #{pwd} and stuNo = #{useNo}
+  </select>
+
+</mapper>

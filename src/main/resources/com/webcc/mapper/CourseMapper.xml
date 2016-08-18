@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webcc.mapper.CourseMapper" >
+  <resultMap id="BaseResultMap" type="com.webcc.model.Course" >
+    <id column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+    <result column="course_time" property="courseTime" jdbcType="VARCHAR" />
+    <result column="teacherid" property="teacherid" jdbcType="INTEGER" />
+    <result column="current_size" property="current_size" jdbcType="INTEGER" />
+    <result column="max_size" property="max_size" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="exam_time" property="examTime" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="CourseTeaMap" type="com.webcc.model.CousrT" >
+    <id column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+    <result column="course_time" property="courseTime" jdbcType="VARCHAR" />
+    <result column="teaName" property="teacherName" jdbcType="VARCHAR" />
+    <result column="current_size" property="current_size" jdbcType="INTEGER" />
+    <result column="max_size" property="max_size" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="exam_time" property="examTime" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.webcc.model.Course" >
+    update tb_course
+    <set >
+      <if test="courseName != null" >
+        course_name = #{courseName},
+      </if>
+      <if test="courseTime != null" >
+        course_time = #{courseTime},
+      </if>
+      <if test="current_size != null" >
+        current_size = #{current_size},
+      </if>
+      <if test="max_size != null" >
+        max_size = #{max_size},
+      </if>
+      <if test="status != null" >
+        status = #{status},
+      </if>
+    </set>
+    where course_id = #{courseId}
+  </update>
+
+  <select id="selectAllCourList" resultMap="CourseTeaMap">
+    SELECT *
+      FROM tb_course tc
+      left join tb_teauser t on tc.teacherid = t.id
+  </select>
+
+  <select id="selectCourList" resultMap="CourseTeaMap">
+    SELECT course_id,course_name,course_time,teaName,current_size,max_size
+     from tb_course tc
+     left join tb_teauser t on tc.teacherid = t.id
+      WHERE status = 1
+  </select>
+
+  <select id="selectCourListByTeaId" parameterType="int" resultMap="BaseResultMap">
+    SELECT * from tb_course where teacherid = #{teaid} order by status
+  </select>
+
+  <select id="selectCourTeaById" parameterType="int" resultMap="CourseTeaMap">
+     SELECT course_id,course_name,course_time,teaName,current_size,max_size,status
+      FROM tb_course tc
+      left join tb_teauser t on tc.teacherid = t.id
+      WHERE tc.course_id = #{courseId}
+  </select>
+
+  <select id="selectExamList" parameterType="int" resultMap="CourseTeaMap">
+    SELECT course_name,teaName,exam_time
+      FROM tb_course tc
+      left join tb_teauser t on tc.teacherid = t.id
+      WHERE tc.status = 3
+  </select>
+
+  <select id="selectCourListEndByTeaId" parameterType="int" resultMap="BaseResultMap">
+        SELECT * from tb_course where teacherid = #{teaid} and status = 3;
+  </select>
+
+  <update id="updataCurrentSize" parameterType="int" >
+    UPDATE tb_course SET `current_size`=`current_size`+1  WHERE `course_id`= #{courid};
+  </update>
+
+  <update id="updataCurrentSizeDel" parameterType="int" >
+    UPDATE tb_course SET `current_size`=`current_size`-1  WHERE `course_id`= #{courid};
+  </update>
+
+  <update id="updataCourSta" parameterType="int">
+    UPDATE tb_course SET `status`= status + 1  WHERE `course_id`= #{courid};
+  </update>
+
+  <update id="updataExamT" parameterType="Course">
+    UPDATE tb_course SET
+    exam_time= #{examTime}
+    WHERE course_id= #{courseId}
+  </update>
+
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    course_id, course_name, course_time, teacherid,current_size,max_size,status,exam_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.webcc.model.CourseExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from tb_course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_course
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_course
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.webcc.model.CourseExample" >
+    delete from tb_course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.webcc.model.Course" >
+    insert into tb_course (course_id, course_name, course_time,max_size,
+      teacherid)
+    values (#{courseId,jdbcType=INTEGER}, #{courseName,jdbcType=VARCHAR}, #{courseTime,jdbcType=INTEGER},#{max_size},
+      #{teacherid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.webcc.model.Course" >
+    insert into tb_course
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="courseId != null" >
+        course_id,
+      </if>
+      <if test="courseName != null" >
+        course_name,
+      </if>
+      <if test="courseTime != null" >
+        course_time,
+      </if>
+      <if test="teacherid != null" >
+        teacherid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="courseId != null" >
+        #{courseId,jdbcType=INTEGER},
+      </if>
+      <if test="courseName != null" >
+        #{courseName,jdbcType=VARCHAR},
+      </if>
+      <if test="courseTime != null" >
+        #{courseTime,jdbcType=INTEGER},
+      </if>
+      <if test="teacherid != null" >
+        #{teacherid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.webcc.model.CourseExample" resultType="java.lang.Integer" >
+    select count(*) from tb_course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tb_course
+    <set >
+      <if test="record.courseId != null" >
+        course_id = #{record.courseId,jdbcType=INTEGER},
+      </if>
+      <if test="record.courseName != null" >
+        course_name = #{record.courseName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.courseTime != null" >
+        course_time = #{record.courseTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.teacherid != null" >
+        teacherid = #{record.teacherid,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tb_course
+    set course_id = #{record.courseId,jdbcType=INTEGER},
+      course_name = #{record.courseName,jdbcType=VARCHAR},
+      course_time = #{record.courseTime,jdbcType=INTEGER},
+      teacherid = #{record.teacherid,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.webcc.model.Course" >
+    update tb_course
+    set course_name = #{courseName,jdbcType=VARCHAR},
+      course_time = #{courseTime,jdbcType=INTEGER},
+      teacherid = #{teacherid,jdbcType=INTEGER}
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </update>
+
+
+</mapper>
